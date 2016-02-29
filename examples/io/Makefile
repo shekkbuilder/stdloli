@@ -30,7 +30,7 @@ OBJECTS := $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 SOBJECTS := $(SSOURCES:$(SRCDIR)/%.s=$(OBJDIR)/%.o)
 USOBJECTS := $(USSOURCES:$(SRCDIR)/%.S=$(OBJDIR)/%.o)
 
-$(BINDIR)/$(TARGET): $(OBJECTS) $(SOBJECTS) $(USOBJECTS)
+$(BINDIR)/$(TARGET): dirs $(OBJECTS) $(SOBJECTS) $(USOBJECTS)
 	@echo "Linking..."
 	@$(LINKER) $@ $(OBJECTS) $(SOBJECTS) $(USOBJECTS) $(LFLAGS)
 	@echo "Stripping..."
@@ -47,6 +47,10 @@ $(SOBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.s
 $(USOBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.S
 	@echo "Compiling ASM "$<" (with preprocessor)..."
 	@$(CC) $(CFLAGS) -c $< -o $@
+
+dirs:
+	@mkdir -p $(OBJDIR)
+	@mkdir -p $(BINDIR)
 
 .PHONEY: clean
 clean:
