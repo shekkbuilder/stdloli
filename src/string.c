@@ -5,7 +5,3 @@ size_t strlen(const char *str) {
 	for (p = str; *p; p++);
 	return p - str;
 }
-
-int useless() {
-	return strlen("meme");
-}
