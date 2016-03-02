@@ -4,12 +4,15 @@ process, which means that only parts of the library that are actually used by
 your program will be linked. This results in extremely small binaries, usually 
 an order of magnitude smaller.
 
-At the moment, it only supports AMD64 and I only really implemented file 
-operations, but it's already usable. Just grab the code and it will compile out 
+At the moment, it only supports AMD64 and I only really implemented a few 
+syscalls, but it's already usable. Just grab the code and it will compile out 
 of the box.
 
 I won't write any documentation anytime soon, but you can check out the examples
 folder and learn the api from there.
+
+Oh by the way, this has absolutely no license. You can do whatever you want with
+it.
 
 # Why?
 I love compact software with little to no dependencies that compiles  and runs 

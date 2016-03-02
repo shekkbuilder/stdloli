@@ -1,8 +1,7 @@
 #pragma once
 
-#include <lolint.h>
-
-typedef intptr_t fd_t;
+#include <types.h>
+#include <stdloli.h>
 
 #define null ((void*)0)
 
@@ -24,3 +23,5 @@ size_t fread(fd_t fd, void* dst, size_t byte_count);
 size_t fputs(fd_t fd, const char* str);
 size_t puts(const char* str);
 size_t prln(const char* str);
+size_t sprintf(char*buf, const char* fmt, ...);
+size_t vsprintf(char* buf, const char* fmt, va_list va);

@@ -1,4 +1,6 @@
+#include <stdloli.h>
 #include <lolio.h>
+#include <string.h>
 
 int main() {
 	// stdout
@@ -27,8 +29,8 @@ int main() {
 		prln("Failed to open file");
 		return 1;
 	}
-	char buf[16] = {0};
-	fread(f, buf, 16);
+	char buf[512] = {0};
+	fread(f, buf, 512);
 	puts("Contents of the file: ");
 	prln(buf);
 	fclose(f);
