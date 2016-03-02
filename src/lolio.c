@@ -89,6 +89,7 @@ size_t vsprintf(char* buf, const char* fmt, va_list va) {
 		}
 
 		/* process all specifiers */
+		/* TODO: convert all these flags into a bitmask */
 		int done = 0;
 		int valid = 0; /* true if there's at least one specifier */
 		int base = 0;
