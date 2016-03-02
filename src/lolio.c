@@ -89,16 +89,17 @@ size_t vsprintf(char* buf, const char* fmt, va_list va) {
 		}
 
 		/* process all specifiers */
-		/* TODO: convert all these flags into a bitmask */
 		int done = 0;
-		int valid = 0; /* true if there's at least one specifier */
+		uint8_t flags = 0;
 		int base = 0;
-		int string = 0;
-		int chara = 0;
-		int integer = 0;
-		int longi = 0;
-		int uppercase = 0;
-		int unsig = 0;
+		static const uint32_t 
+			valid = 	1 << 0, /* true if there's at least one specifier */
+			string = 	1 << 1,
+			chara = 	1 << 2,
+			integer = 	1 << 3,
+			longi = 	1 << 4,
+			uppercase = 1 << 5,
+			unsig = 	1 << 6;
 		
 		/* just because using a normal switch is boring */
 		static const int bases[21] = { 
@@ -111,28 +112,26 @@ size_t vsprintf(char* buf, const char* fmt, va_list va) {
 		while (!done) {
 			switch (lc = tolower(*f)) {
 			case 'l':
-				longi = 1;
-				integer = 1;
+				flags |= longi | integer;
 				break;
 
 			case 'd':
 			case 'x':
 			case 'o':
 				base = bases[lc - 'd'];
-				integer = 1;
+				flags |= integer;
 				break;
 
 			case 'u':
-				unsig = 1;	
-				integer = 1;
+				flags |= unsig | integer;
 				break;
 
 			case 'c':
-				chara = 1;
+				flags |= chara;
 				break;
 
 			case 's':
-				string = 1;
+				flags |= string;
 				break;
 
 			case 0:
@@ -141,12 +140,14 @@ size_t vsprintf(char* buf, const char* fmt, va_list va) {
 				continue;
 			}
 
-			uppercase = tolower(*f) != *f; 
+			if (tolower(*f) != *f) {
+				flags |= uppercase;
+			}
 			f++;
-			valid = 1;
+			flags |= valid;
 		}
 
-		if (!valid) {
+		if (!(flags & valid)) {
 			f = start;
 			goto skipchar;
 		}
@@ -156,30 +157,30 @@ size_t vsprintf(char* buf, const char* fmt, va_list va) {
 		#define printf_itoa(T) \
 			itoa(base, (int64_t)(T)va_arg(va, T), p, width, fill)
 		#define	printf_itoa_s(T) \
-			(unsig ? printf_itoa(u##T) : printf_itoa(T))
+			(flags & unsig ? printf_itoa(u##T) : printf_itoa(T))
 
-		if (integer && !base) {
+		if (flags & integer && !base) {
 			base = 10;
 		}
 	
-		if (string) {
+		if (flags & string) {
 			const char* s = (const char*)va_arg(va, const char*);
 			charcount = strlen(s);
 			memcpy(p, s, charcount);
 		}
 
-		else if (chara) {
+		else if (flags & chara) {
 			charcount = 1;
 			*p = (char)va_arg(va, int);
 		}
 
 		else {
-			charcount = longi ?
+			charcount = flags & longi ?
 				printf_itoa_s(int64_t) :
 				printf_itoa_s(int32_t);
 		}
 
-		if (uppercase) { 
+		if (flags & uppercase) { 
 			/* this could be optimized when we're dealing with integers by 
 			 * only doing anything if it's a hex number */
 			for (; charcount; charcount--) {
